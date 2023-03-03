@@ -1,4 +1,4 @@
-ETCD -- is a Database which has a key-value format about container->NodeLabel (port 2379 peer communication 2380)
+ETCD -- is a Database which has a key-value format about container->NodeLabel
 Scheduler  --identifies the right node to schedule a container(based on container requirement,
 worker node capacity,any other policies,taints&toleration,etc)
 controller -- controller available for take care of differrent areas,-Node ctl take care of Nodes
@@ -6,7 +6,7 @@ controller -- controller available for take care of differrent areas,-Node ctl t
 			  KUBE-API server is PRIMARY management of orchastrting all operation within the cluster.
 KUBELET -- is captain of the ship.kubelet is an engine runs on all the nodes& its listens an instructions from the API server.
            like deploy or destroy--,. API fetches periodicall status report from KUBELET.
-KUBEPROXY -- ensures neccessary rules the worker nodes allows the container to communicate which is running on other worker    nodes
+KUBEPROXY -- ensures neccessary rules the worker nodes aloows the container to communicate which is running on other worker nodes
               in simple words kubeproxy enabling communication between services within the cluster.
 			  
 
@@ -41,7 +41,7 @@ spec:
  [strategy:
     type: RollingUpdate
 	  rollingUpdate:
-	    maxUnavailable: 0
+	    maxUnavailable: 1
 		maxSurge: 1 ]
   selector:
     matchLabels:
@@ -83,8 +83,7 @@ kubectl describe pod podname
 **START From Dell**
 
 KUBERNETES
-KUBERNETES CLUSTER 
- : 6443
+KUBERNETES CLUSTER PORT : 6443
 pod creation roadmap : kubectl->API->kubelet->create container pod
 API,scheduler,controller,etcd are also containers but it is STATIC PODS.
 
@@ -177,25 +176,6 @@ nodeSelector in deployment file : refer line 48,49
 
 nodeAffinity 
 RequiredDuringSchedulingIgnoreDuringExecution
-example:
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: disktype
-            operator: In
-            values:
-            - ssd            
-  containers:
-  - name: nginx
-    image: nginx
-    imagePullPolicy: IfNotPresent
 nodeAntiAffinity
 prefferredDuringSchedulingIgnoreDuringExecution
 
@@ -364,9 +344,7 @@ to create secret file **updated on JUNE15-2022
 #kubectl describe secret db-secret
 it will show the details
 then show it in wide
-#kubectl get secret db-secret -o wide
-
-  [TO DECODE - echo qwer | base64 --decode
+#kubectl get secret db-secter -o wide
 
 The above same will be in imperative method(below)
 #vi secret-test.yaml
@@ -379,38 +357,7 @@ data:
   DB-PASSWORD: encryptedvalue
 :wq!
 Then we have to map this file in to Pod
-apiVersion:V1
-kind:Pod
-metadata:
-  name: secret-pod
-spec:
-  containers:
-  -  name: myctr
-     image: busybox
-     command: ["sh","-c","echo $(MY_SECRET) && 	sleep 3600"]
-	 env:
-	 -  name: MY_SECRET
-	    valueFrom:
-		  secretKeyRef:
-		    name:secret
-			key:username
-	 volumeMounts:
-	   -  name:secret-volume
-	      mountPath: /etc/secrets
- volumes:
- -  name: secret-volume
-    secret:
-	  secretName: mysecret
 
-			
-	 
-    
-
-
-
-[DEVSTEIN notes: 1.if we give data: "we shoud give base64 encoded value
-                 2.if we give normal value then we must use "stringData:" in the data field ]
-				 3.we can't recretae secret files . we should delete the pod and cretae new one.
  
 Routingmesh: If the pod is not running on the one node the service willautomatically redirect to the another pod
 which is running on the another node
@@ -576,7 +523,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name:pvc1
-spec:
+spec;
   storageClassName: manual
   accessModes: 
     -ReadWriteOnce
@@ -610,22 +557,15 @@ spec:
 :wq!
 		   
   
-Kuberenetes metrics -6th video after PV,PVC
+Kuberenetes metrics
 
 Heapster--> cAdvisor
 Heapster monitoring, InfluxDB monitoring,Grafana monitoring
-Metrics-api (version 0.4.4 or 0.4.5 in components.yaml) when we install metrics-api we shoud add "--kubelet-insecure-tls"
-this includes - service account (1),cluster role(2),CR Binding(2),Role(1),service,deployment ,api service (total=9)
-
-
 ****
-HPA 6th Video after metrics server 
- HPA -- Horizontal Auto Scaling -- scale out
-1st step-first install & configure metrics server
-2nd step : install /configure HPA
-3rd step: create deployment
-4th step : Action
-#kubectl autoscale deployment app1 --cpu-percent=20 --min=2 --max=10
+HPA -- Horizontal Auto Scaling -- scale out
+first install & configure metrics server
+create deployment
+kubectl autoscale deployment app1 --cpu-percent=20 --min=2 --max=10
 
 **********************************
 
@@ -651,7 +591,7 @@ $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scr
 $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 
-example: search for one appln in hub & add repo for this appln:
+example: sear for one appln in hub & add repo for this appln:
 helm search hub ghost
 
 Add the stable repository:
@@ -672,29 +612,6 @@ image-video example--Ingress (Application level LB- Layer 7 LB )
  **normal LB is layer 4 (TCP) **
 Do INGRESS lab  ASAP
 
-1. create main page deployment (web-app)
-2. create image-app deployment with InitContainer,volume,volumeMounts,html content
-3. create video-app deployment with InitContainer,volume,volumeMounts,html content
-4. create 3 respective service (web-app, image-app, video-app)
-then CRETAE A INGRESS MANIFEST FILE WHICH INCLUDES
- - annotations
- - host (nginx.example.com)
- - path:
-   -  backend:
-        serviceName: web-app
-		servicePort: 80
-		
- - host (image.nginx.example.com)
- - path:
-   -  backend:
-        serviceName: image-app
-		servicePort: 80
- 
- - host (video.nginx.example.com)
- - path:
-   -  backend:
-        serviceName: video-app 
-		servicePort: 80
 
 
 
@@ -755,7 +672,7 @@ $ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scr
 $ chmod 700 get_helm.sh
 $ ./get_helm.sh
 
-example: search for one appln in hub & add repo for this appln:
+example: sear for one appln in hub & add repo for this appln:
 helm search hub ghost
 
 Add the stable repository:
@@ -769,11 +686,6 @@ helm repo update
 The full name for the chart is stable/ghost. You can inspect the chart for more information:
 
 helm show readme stable/ghost
-[
-mkdir helm-soft
-cd helm-soft
-helm create web-app
-
 
 *********
 INGRESS :
@@ -817,7 +729,7 @@ snapshot attached
 
 Next step is to cretae RBAC(role binding)
 file size didn't fit in page size so pls refer kube8 video 1:01:19
-[in RBAC- 1.create service account 2.create cluster role 3.cluster role binding(bind to service account
+[in RBAC- 1.create service account 2.create clusterrole 3.cluster role binding(bind to service account
 4.create role 5. rolebinding(bind to same service account)]
  
 
@@ -911,7 +823,7 @@ https://www.youtube.com/watch?v=efiMiaFjtn8  --   deployment starategies
 https://www.youtube.com/watch?v=efiMiaFjtn8  -- deployment startegies
 Pls check liveness & readyness probe
 older version running with 5 pods-then deploy v2 yaml file that contains maxSurge: 1 & maxUnavailable:0
-it will deploy 1 v2pod then terminate 1 v1pod -- after some time all pods with v2 deployed.
+it will deploy 1 v2pod then terminate 1 v1pod -- after some time all pods with v2 deplyed.
 
 #kubectl rollout undo deploy my-app
 blue green - double resource needed- v1 for users& v2 for test engineers-deploy both v1&v2-
@@ -930,7 +842,7 @@ template:
 ***
 and give the below patch command
 #kubectl patch service my-app -p "{"spec":{"selection":{"version":"v2.0.0"}}}
-then kubectl delete deploy my-app-v1
+thenkubectl delete deploy my-app-v1
 Canary deployment
 v1-4 pods & v2 1pod initially deployed
 scale up or scale down manually
@@ -939,173 +851,7 @@ scale up or scale down manually
 https://www.youtube.com/watch?v=aTlQBofihJQ  --- readiness,liveness& startup probe--Rahul wagh
 https://www.youtube.com/watch?v=gnWS4FYlHeo  -- statefulset with headless service --kubetrain 
 https://www.youtube.com/watch?v=PzzFsvadZdY  -- security context on pod --kubetrain
-https://www.youtube.com/watch?v=njRtjQwuAMo&ab_channel=DeekshithSN   --- INIT and SIDECAR CONTAINER
-cluster upgrade: https://www.youtube.com/watch?v=H6YzWNeW79k&ab_channel=K21Academy
--------------------------------------------------------------------------------------------------------------------------------
-DEVSTEIN:
-empty dir{} - if we create an empty dir{} vol , it will store the volume name (in our case cache-volume) in the pod's node under
-/var/lib/kubelet/podname/volume 
-how to find the pod ID ? 
-1. #kubectl get pods podname -o yaml (we can see it in "UID" )
-2.#kubectl get pods podname -o jsonpath='{.metadata.uid}'
---------
-hostPath:
-1. create PV (storage volume is must and hostPath - host:"/home/learner_vinodh")
-2.create PVC (storage volume is must and resources: -requests: - storage: 512mi)
-3.attach this in to pod (volumeMounts: -mountPath: -name: and volumes: - persistentVolumeClaim: - claimName: pvc-01)
 
 
-
-
-TROUBLESHOOTING:
-
-https://www.youtube.com/watch?v=ORSxQeboprc&ab_channel=Abhishek.Veeramalla
---------------
-https://www.youtube.com/watch?v=EirIuYq1Yes&list=RDCMUCRgn-SAQZa4I41zLH03LoOQ&start_radio=1&ab_channel=K21Academy 
-https://www.youtube.com/watch?v=EirIuYq1Yes&list=RDCMUCRgn-SAQZa4I41zLH03LoOQ&start_radio=1&ab_channel=K21Academy
-
-kubeapi server connection refused 
-1 st point --check the kubeapi server's ip address & port in /etc/kubernetes/manifests -> more kubeapi.yaml then check the ip & port(6443)
-after that change the port in user's home dir .kube/config 
-2 scenario - check the kubeapi server's status - kubelet manages the kubeapi server so we should check the kubelet status
-#systemctl status kubelet and #kubectl enable --now kubelet and  #ps aux | grep api if still kubeapi server not coming up
-#journalctl -u kubelet it is ok then check #cd /var/log/pods in this we can see folder kubeapi-server kube-master
-within that thr is log file (it shows some err\= authorization= failzur) then we go to /etc/kubernetes/manifests and go to kube-apiserver.yaml and  we removed this unwanted "failz" then restarted all the services and after that it started working.
----------
-pod is in pending state
-soln: the reason is pod is not scheduled. to check this #kubectl describe pod podname 
-this shows in the "events" that node is tainted so we need to untaint the node using #kubectl taint node nodename cka=test:unschedule- (then it will work) or do tolerations (if i dont have manifest file then use the below command
-#kubectl get pod podname -o yaml and then #kubectl get pod podname -o yaml > pod.yaml after that edit with toleration
-
----------
-Init:CrashLoopbackOff
-soln: the problem is related with init container spec. so check the init container section and correct the file (eg: it was echo 0000 - so we removed the 0000 and do #kubectl replace -f demo.yaml then check #kubectl get pods -w
----------
-ImagePullBackOff:
-soln: it might be due to wrong image name like "enginx" instead of "nginx"
-#kubectl describe pod pod/nginx -6ccc49df-74-kzgb9h (it shows pulling image "engnx" failed to pull the image) tht is the reason
-to resolve this
-option 1 : #kubectl edit 2. dump yaml file and apply 3. #kubectl set image 
-we go for #kubectl edit deployment nginx (in our case image issue is fixed but we are facing node "node is not Ready" status to fix this
-#kubectl describe node (it shows under the "Lease" - "kubelet stopped posting node status")
-the reason is kubelet is not running so we should do the below method
-#kubectl start kubelet
-#kubectl enable --now kubelet
------------
-other troubleshooting commands
-#kubectl logs podname
-#kubectl
---------------
-STATEFULLSET:
-DB master -> application writes
-slave1 -> clone slave1 from master -continuos replication master -read only
-slave2 -> clone slave2 from slave1 -continuos replication master -read only
-imp. points 1. in the statefullset the pod comes with sequential order
-             2. it comes with same name & ordinal index from0
-when we create a pod the dns record will not be created. internal dns is running in kubernetes
-#kubectl get pods -n kube-system (it will show the "coredns" running in kubernetes)
-#kubectl get svc -n kube-system (it will show the "kube-dns" running in kubernetes)
-#cat /var/lib/kubelet/config.yaml (it will show the "clusterDNS -10.96.0.10"- kubelets configured with this DNSserver)
-so all of the pods are pre-configured with DNS server to resolve the nameserver
-we have to specify - headlessserviceName: "nginx" and just want to create "dns record" dont want to create load balancer and
-set clusterIP: None thats all . all we want to create DNS records so that other pods can talk to the pods with the help of pod names.in the SFS template for eg:- we can give in "volumeClaimTemplates" -metadata name: www (then it will comes three volumes www-0 www-1 www-2 vice versa
--------
-multi container: https://www.youtube.com/watch?v=U1fCTQ2irGE&list=PLlI3peB1V-roY_90v7XfHX19ATS4tP2e0&index=21&ab_channel=K21Academy
-
-DeekshithSN_K8S_Interview
-1.Init containers
-2.sidecar - put or dump files in to common point like volume:empty Dir{} and ask theside car container to push the logs
-3.distrolus images-ephemeral container-debug container-kubectl debug
-4.Ambassidor container-proxy container-MTLS,how many reqs. are going to pod1 to pod2,reqs.success ,failures
-5.adaptor container-json exporter to xml format or exporter
-|
-ISTIO:
-1.Galley component- receive the .yaml & validate->
-PILOT - convert the configuration to onboard configuration(distributed to each one of the proxies)->
-POLICY component -if you want to write more policies in the proxy use POLICY component
-TELEMETRY component - proxy constantly report on telemetry infn (whats going on the system)
-CITADEL componet - provides strong identity to each one of the services to the system (proxy use MTLS to talk one another)
-https://www.youtube.com/watch?v=FtLg071mIXg&ab_channel=F5DevCentral
-https://www.youtube.com/watch?v=16fgzklcF7Y&ab_channel=TechWorldwithNana
-https://www.youtube.com/watch?v=voAyroDb6xk&ab_channel=TechWorldwithNana
-
-                ************  KUBERNETES TOP 10 SECURITIES  ***************
------------------------------
-
-https://www.youtube.com/watch?v=oBf5lrmquYI&ab_channel=TechWorldwithNana
-1.scan image before push it to the registry and scan image regularly in the registry(scaning vulnerabilities)
-tools- sysdig,snyk
-2. Run container as non-root 
-3.use RBAC to manage access permissions. client certificates for humans and service account is for non-human like 
-  services. pod to communicate K8S API
-4. by default each pod can communicate to other pods in K8S cluster-> limit the communication with NETWORK RULES.
-  ->control traffic rules by ipaddress or port level using NETWORK POLICY -eg. below
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name:my-app
-spec:
-  ingress:
-  - from:
-    - ipBlock:
-	  cidr: 172.17.0.0/16
-	  except:
-	  - 172.17.1.0/24
----
-frontend pods only talk to backend not to DB
-N/W policies are implemented by the network plugin by kalico or weave net etc..AND N/W POLICY FOR N/W LEVEL AND FOR SERVICE
-LEVEL WE USE SERVICE MESH LIKE ISTIO
-5.ENCRYPT COMMUNICATION: define communication rules & enable mTLS between pods [encrypt cluster internal communication]
-6. SECURE SECRET DATA: in the secret files we use only encode(not encryption) data which can be easily hacked by others so we should use 3rd partytools like AWS KMS,hashicorp VAULT
-7.SECURE ETCD STORE: if the attacker access to the ETCD , they can bypass the APIserver
-  soln: put ETCD behind a firewall->only the API server can access the ETCD.
-        all the ETCD data should be encrypted
-8. REGULAR BACKUP ETCD DATA AND STORES BACKUP SAFELY - we can use kasten k10 for this 
-9. cofiguer security policies : define policies to enforce specific configurations
-   - dont allow pods that run container as root
-   - n/w policy needs to be defined for every pod
-10. anyway we can't protect the cluster 100%. so have aproper strategy and mechanism for DISASTER RECOVERY
-    
-		
-
-
-
-			 
-KODEKLOUD
-
-CLUSTER MAINTENANCE- OS UPGRADE
-pod eviction timeout (default is 5 m)
-#kube-controller-manager --pod-eviction-timeout=5m0s
----
-#kubectl drain node-1 after finish the work #kubectl uncordon node-1
-#kubectl cordon node-1 (new pods are not schduled in this node)
-----------
-ETCD BACKUP
-the directory is /var/lib/etcd
-#ETCDCTL_API=3 etcdctl snapshot
-#export ETCDCTL_API=3 then give 
-#etcdctl snapshot save --endpoints=127.0.0.1:2379 \
->--cacert=/etc/kubernetes/pki/etcd/ca.crt \
->--cert=/etc/kubernetes/pki/etcd/server.crt \
->--key=/etc/kubernetes/pki/etcd/server.key
->/opt/snapshot-pre-boot.db
-snapshot saved
-
-if the application fails then we have to restore the etcd backup
-#etcdctl snapshot restore --data-dir /var/lib/etcd-from-backup /opt/snapshot-pre-boot.db
-----------------
-CONTEXTS	
-#kubectl config get-contexts -o name
-#kubectl config current-context
-#kubectl config use-context contextname
----------------
-
-
-
-
-
-
-
-
-
- 
+	
+  
